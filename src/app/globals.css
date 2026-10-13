@@ -3,9 +3,16 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --school-blue: #153b75;
+  --school-red: #c8323b;
+  --school-yellow: #f5c542;
 }
 
 @theme inline {
+  --font-school-heading: Impact, var(--font-school-display), sans-serif;
+  --color-school-blue: var(--school-blue);
+  --color-school-red: var(--school-red);
+  --color-school-yellow: var(--school-yellow);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
