@@ -64,7 +64,7 @@ export function Sidebar({
         </p>
         <nav
           aria-label="Dashboard"
-          className="min-h-0 flex-1 space-y-1 overflow-y-auto"
+          className="sidebar-scrollbar -mr-5 min-h-0 flex-1 space-y-1 overflow-y-scroll pr-5"
         >
           {getDashboardNavigation(role).map((item) => (
             <SidebarItem

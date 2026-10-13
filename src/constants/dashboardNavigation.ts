@@ -33,36 +33,77 @@ export const dashboardNavigation: NavigationItem[] = [
     available: true,
   },
 ];
-const groups: NavigationGroup[] = [
+const roleGroups: {
+  label: string;
+  singular: string;
+  path: string;
+  roles: UserRole[];
+  recyclable?: boolean;
+}[] = [
   {
-    label: 'User management',
-    items: [
-      {
-        label: 'Create user',
-        href: '/dashboard/users/create',
-        roles: administrators,
-      },
-      { label: 'All users', href: '/dashboard/users', roles: administrators },
-      {
-        label: 'Administrators',
-        href: '/dashboard/administrators',
-        roles: ['SUPER_ADMIN'],
-      },
-      {
-        label: 'Employees',
-        href: '/dashboard/employees',
-        roles: administrators,
-      },
-      {
-        label: 'Recycle bin',
-        href: '/dashboard/recycle-bin',
-        roles: administrators,
-      },
-    ],
+    label: 'Super admins',
+    singular: 'super admin',
+    path: 'super-admins',
+    roles: ['SUPER_ADMIN'],
   },
+  {
+    label: 'Admins',
+    singular: 'admin',
+    path: 'administrators',
+    roles: ['SUPER_ADMIN'],
+    recyclable: true,
+  },
+  {
+    label: 'Teachers',
+    singular: 'teacher',
+    path: 'teachers',
+    roles: administrators,
+    recyclable: true,
+  },
+  {
+    label: 'Accountants',
+    singular: 'accountant',
+    path: 'accountants',
+    roles: administrators,
+    recyclable: true,
+  },
+  {
+    label: 'Staff',
+    singular: 'staff member',
+    path: 'staff',
+    roles: administrators,
+    recyclable: true,
+  },
+];
+const groups: NavigationGroup[] = [
+  ...roleGroups.map(({ label, singular, path, roles, recyclable }) => ({
+    label,
+    items: [
+      { label: `Add ${singular}`, href: `/dashboard/${path}/create`, roles },
+      {
+        label: `All ${label.toLowerCase()}`,
+        href: `/dashboard/${path}`,
+        roles,
+      },
+      ...(recyclable
+        ? [
+            {
+              label: 'Recycle bin',
+              href: `/dashboard/${path}/recycle-bin`,
+              roles,
+            },
+          ]
+        : []),
+    ],
+  })),
   {
     label: 'Students',
     items: [
+      {
+        label: 'Recycle bin',
+        href: '/dashboard/students/recycle-bin',
+        roles: administrators,
+      },
       {
         label: 'Add student',
         href: '/dashboard/students/create',
@@ -92,6 +133,86 @@ const groups: NavigationGroup[] = [
         label: 'Admission summary',
         href: '/dashboard/admission-summary',
         roles: [...administrators, 'TEACHER'],
+      },
+    ],
+  },
+  {
+    label: 'Attendance',
+    items: [
+      {
+        label: 'All users attendance',
+        href: '/dashboard/attendance/users',
+        roles: administrators,
+      },
+      {
+        label: 'Student attendance',
+        href: '/dashboard/attendance/students',
+        roles: administrators,
+      },
+      {
+        label: 'Teacher attendance',
+        href: '/dashboard/attendance/teachers',
+        roles: administrators,
+      },
+      {
+        label: 'Admin attendance',
+        href: '/dashboard/attendance/admins',
+        roles: administrators,
+      },
+      {
+        label: 'Super admin attendance',
+        href: '/dashboard/attendance/super-admins',
+        roles: administrators,
+      },
+      {
+        label: 'Accountant attendance',
+        href: '/dashboard/attendance/accountants',
+        roles: administrators,
+      },
+      {
+        label: 'Staff attendance',
+        href: '/dashboard/attendance/staff',
+        roles: administrators,
+      },
+      {
+        label: 'Attendance reports',
+        href: '/dashboard/attendance/reports',
+        roles: administrators,
+      },
+      {
+        label: 'My attendance',
+        href: '/dashboard/attendance/me',
+        roles: allRoles,
+      },
+    ],
+  },
+  {
+    label: 'Leave Management',
+    items: [
+      {
+        label: 'Apply for Leave',
+        href: '/dashboard/leave/apply',
+        roles: allRoles,
+      },
+      {
+        label: 'My Applications',
+        href: '/dashboard/leave/my-applications',
+        roles: allRoles,
+      },
+      {
+        label: 'Pending Approvals',
+        href: '/dashboard/leave/pending',
+        roles: administrators,
+      },
+      {
+        label: 'All Applications',
+        href: '/dashboard/leave/applications',
+        roles: administrators,
+      },
+      {
+        label: 'Leave History',
+        href: '/dashboard/leave/history',
+        roles: administrators,
       },
     ],
   },
