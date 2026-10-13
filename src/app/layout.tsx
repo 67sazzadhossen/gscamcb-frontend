@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { schoolName } from '@/constants/school';
+import { school, schoolName } from '@/constants/school';
 import { Anton, Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Providers } from './provider';
@@ -23,6 +23,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: schoolName,
+  icons: { icon: { url: school.logo, type: 'image/webp' } },
   description: `${schoolName} school management system`,
 };
 

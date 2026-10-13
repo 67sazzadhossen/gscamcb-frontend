@@ -1,11 +1,12 @@
 import type { TUser } from '@/types/index.type';
 export type UserRole = TUser['role'];
-type NavigationItem = {
+export type NavigationItem = {
   label: string;
   href: string;
   roles: UserRole[];
   available?: boolean;
 };
+export type NavigationGroup = { label: string; items: NavigationItem[] };
 const allRoles: UserRole[] = [
   'SUPER_ADMIN',
   'ADMIN',
@@ -15,6 +16,14 @@ const allRoles: UserRole[] = [
   'STAFF',
 ];
 const administrators: UserRole[] = ['SUPER_ADMIN', 'ADMIN'];
+const financeRoles: UserRole[] = [...administrators, 'ACCOUNTANT'];
+const employeeRoles: UserRole[] = [
+  ...administrators,
+  'TEACHER',
+  'ACCOUNTANT',
+  'STAFF',
+];
+const academicRoles: UserRole[] = [...administrators, 'TEACHER', 'STUDENT'];
 export const dashboardNavigation: NavigationItem[] = [
   { label: 'Overview', href: '/dashboard', roles: allRoles, available: true },
   {
@@ -23,63 +32,210 @@ export const dashboardNavigation: NavigationItem[] = [
     roles: allRoles,
     available: true,
   },
+];
+const groups: NavigationGroup[] = [
   {
-    label: 'Administrators',
-    href: '/dashboard/administrators',
-    roles: ['SUPER_ADMIN'],
+    label: 'User management',
+    items: [
+      {
+        label: 'Create user',
+        href: '/dashboard/users/create',
+        roles: administrators,
+      },
+      { label: 'All users', href: '/dashboard/users', roles: administrators },
+      {
+        label: 'Administrators',
+        href: '/dashboard/administrators',
+        roles: ['SUPER_ADMIN'],
+      },
+      {
+        label: 'Employees',
+        href: '/dashboard/employees',
+        roles: administrators,
+      },
+      {
+        label: 'Recycle bin',
+        href: '/dashboard/recycle-bin',
+        roles: administrators,
+      },
+    ],
   },
   {
-    label: 'Users & employees',
-    href: '/dashboard/users',
-    roles: administrators,
+    label: 'Students',
+    items: [
+      {
+        label: 'Add student',
+        href: '/dashboard/students/create',
+        roles: [...administrators, 'TEACHER'],
+      },
+      {
+        label: 'All students',
+        href: '/dashboard/students',
+        roles: administrators,
+      },
+      {
+        label: 'Collected students',
+        href: '/dashboard/collected-students',
+        roles: ['TEACHER'],
+      },
+      {
+        label: 'Admissions',
+        href: '/dashboard/admissions',
+        roles: administrators,
+      },
+      {
+        label: 'Home visits',
+        href: '/dashboard/home-visits',
+        roles: [...administrators, 'TEACHER'],
+      },
+      {
+        label: 'Admission summary',
+        href: '/dashboard/admission-summary',
+        roles: [...administrators, 'TEACHER'],
+      },
+    ],
   },
   {
-    label: 'Students & admissions',
-    href: '/dashboard/students',
-    roles: administrators,
+    label: 'Academic',
+    items: [
+      { label: 'Classes', href: '/dashboard/classes', roles: administrators },
+      { label: 'Sections', href: '/dashboard/sections', roles: administrators },
+      {
+        label: 'My academic info',
+        href: '/dashboard/academic-info',
+        roles: ['STUDENT'],
+      },
+      {
+        label: 'Admit cards',
+        href: '/dashboard/admit-cards',
+        roles: academicRoles,
+      },
+      { label: 'ID cards', href: '/dashboard/id-cards', roles: allRoles },
+    ],
   },
   {
-    label: 'Classes & sections',
-    href: '/dashboard/classes',
-    roles: administrators,
-  },
-  {
-    label: 'Collected students',
-    href: '/dashboard/collected-students',
-    roles: ['TEACHER'],
-  },
-  {
-    label: 'Home visits',
-    href: '/dashboard/home-visits',
-    roles: [...administrators, 'TEACHER'],
-  },
-  {
-    label: 'Admission summary',
-    href: '/dashboard/admission-summary',
-    roles: [...administrators, 'TEACHER'],
-  },
-  {
-    label: 'Student fees',
-    href: '/dashboard/fees',
-    roles: [...administrators, 'ACCOUNTANT'],
-  },
-  {
-    label: 'Fee waivers',
-    href: '/dashboard/waivers',
-    roles: [...administrators, 'ACCOUNTANT'],
-  },
-  {
-    label: 'My academic info',
-    href: '/dashboard/academic-info',
-    roles: ['STUDENT'],
-  },
-  {
-    label: 'Recycle bin',
-    href: '/dashboard/recycle-bin',
-    roles: administrators,
+    label: 'Accounts',
+    items: [
+      {
+        label: 'Accounts overview',
+        href: '/dashboard/accounts/overview',
+        roles: financeRoles,
+      },
+      {
+        label: 'Fee settings',
+        href: '/dashboard/accounts/fee-settings',
+        roles: financeRoles,
+      },
+      {
+        label: 'Collect payment',
+        href: '/dashboard/accounts/collect-payment',
+        roles: financeRoles,
+      },
+      {
+        label: 'Invoices',
+        href: '/dashboard/accounts/invoices',
+        roles: financeRoles,
+      },
+      {
+        label: 'Receipts',
+        href: '/dashboard/accounts/receipts',
+        roles: financeRoles,
+      },
+      {
+        label: 'Payment history',
+        href: '/dashboard/accounts/payments',
+        roles: financeRoles,
+      },
+      {
+        label: 'Dues and arrears',
+        href: '/dashboard/accounts/dues',
+        roles: financeRoles,
+      },
+      {
+        label: 'Fee waivers',
+        href: '/dashboard/accounts/waivers',
+        roles: financeRoles,
+      },
+      {
+        label: 'Refunds',
+        href: '/dashboard/accounts/refunds',
+        roles: financeRoles,
+      },
+      {
+        label: 'Salary payments',
+        href: '/dashboard/accounts/payroll',
+        roles: financeRoles,
+      },
+      {
+        label: 'Salary advances',
+        href: '/dashboard/accounts/salary-advances',
+        roles: financeRoles,
+      },
+      {
+        label: 'Expenses',
+        href: '/dashboard/accounts/expenses',
+        roles: financeRoles,
+      },
+      {
+        label: 'Other income',
+        href: '/dashboard/accounts/income',
+        roles: financeRoles,
+      },
+      {
+        label: 'Cash and bank transactions',
+        href: '/dashboard/accounts/transactions',
+        roles: financeRoles,
+      },
+      {
+        label: 'Financial reports',
+        href: '/dashboard/accounts/reports',
+        roles: financeRoles,
+      },
+      {
+        label: 'Payment methods',
+        href: '/dashboard/accounts/payment-methods',
+        roles: administrators,
+      },
+      {
+        label: 'My invoices',
+        href: '/dashboard/accounts/my-invoices',
+        roles: ['STUDENT'],
+      },
+      {
+        label: 'My payments',
+        href: '/dashboard/accounts/my-payments',
+        roles: ['STUDENT'],
+      },
+      {
+        label: 'My receipts',
+        href: '/dashboard/accounts/my-receipts',
+        roles: ['STUDENT'],
+      },
+      {
+        label: 'My dues',
+        href: '/dashboard/accounts/my-dues',
+        roles: ['STUDENT'],
+      },
+      {
+        label: 'My payslips',
+        href: '/dashboard/accounts/my-payslips',
+        roles: employeeRoles,
+      },
+    ],
   },
 ];
 export const getDashboardNavigation = (role: UserRole) =>
   dashboardNavigation.filter((item) => item.roles.includes(role));
+export const getDashboardGroups = (role: UserRole) =>
+  groups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter((item) => item.roles.includes(role)),
+    }))
+    .filter((group) => group.items.length > 0);
+export const isNavigationActive = (pathname: string, href: string) =>
+  href === '/dashboard'
+    ? pathname === href
+    : pathname === href || pathname.startsWith(href + '/');
 export const roleLabel = (role: UserRole) =>
   role.replaceAll('_', ' ').toLowerCase();

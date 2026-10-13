@@ -1,9 +1,11 @@
 'use client';
-import Link from 'next/link';
+import SidebarItem from './SidebarItem';
 import UserAvatar from '@/components/Shared/UserAvatar';
 import { usePathname } from 'next/navigation';
 import {
   getDashboardNavigation,
+  getDashboardGroups,
+  isNavigationActive,
   roleLabel,
   type UserRole,
 } from '@/constants/dashboardNavigation';
@@ -64,36 +66,50 @@ export function Sidebar({
           aria-label="Dashboard"
           className="min-h-0 flex-1 space-y-1 overflow-y-auto"
         >
-          {getDashboardNavigation(role).map((item) => {
-            const active =
-              item.href === '/dashboard'
-                ? pathname === item.href
-                : pathname === item.href ||
-                  pathname.startsWith(item.href + '/');
-            const classes = `flex w-full items-center justify-between gap-2 rounded-xl px-4 py-3 text-left text-sm font-semibold transition ${active ? 'bg-school-yellow text-blue-950' : 'text-blue-100 hover:bg-white/10'}`;
-            return item.available ? (
-              <Link
-                key={item.href}
-                href={item.href}
-                onClick={onClose}
-                aria-current={active ? 'page' : undefined}
-                className={classes}
+          {getDashboardNavigation(role).map((item) => (
+            <SidebarItem
+              key={item.href}
+              item={item}
+              pathname={pathname}
+              onNavigate={onClose}
+            />
+          ))}
+          {getDashboardGroups(role).map((group) => {
+            const active = group.items.some((item) =>
+              isNavigationActive(pathname, item.href),
+            );
+            return (
+              <details
+                key={`${group.label}-${active}`}
+                open={active || undefined}
+                className="group rounded-xl"
               >
-                {item.label}
-              </Link>
-            ) : (
-              <button
-                key={item.href}
-                type="button"
-                disabled
-                title="This page is coming soon"
-                className="flex w-full items-center justify-between gap-2 rounded-xl px-4 py-3 text-left text-sm text-blue-200/60"
-              >
-                <span>{item.label}</span>
-                <span className="rounded bg-white/5 px-2 py-0.5 text-[10px]">
-                  Soon
-                </span>
-              </button>
+                <summary className="flex cursor-pointer list-none items-center justify-between rounded-xl px-4 py-3 text-sm font-semibold text-white transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-school-yellow [&::-webkit-details-marker]:hidden">
+                  {group.label}
+                  <svg
+                    aria-hidden="true"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    className="transition-transform group-open:rotate-180"
+                  >
+                    <path d="m6 9 6 6 6-6" />
+                  </svg>
+                </summary>
+                <div className="mb-2 ml-4 space-y-1 border-l border-white/15 pl-2">
+                  {group.items.map((item) => (
+                    <SidebarItem
+                      key={item.href}
+                      item={item}
+                      pathname={pathname}
+                      onNavigate={onClose}
+                    />
+                  ))}
+                </div>
+              </details>
             );
           })}
         </nav>
