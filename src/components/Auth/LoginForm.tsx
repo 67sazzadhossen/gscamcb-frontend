@@ -2,65 +2,59 @@
 
 import { useState, type FormEvent } from 'react';
 
+import { useRouter } from 'next/navigation';
+import { useLoginMutation } from '@/redux/features/auth/authApi';
+import { useAppDispatch } from '@/redux/hook';
+import { setUser } from '@/redux/features/auth/authSlice';
+import { baseApi } from '@/redux/api/baseApi';
+import AuthField from './AuthField';
+import { authError } from './authError';
 export default function LoginForm() {
-  const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+  const [login, { isLoading }] = useLoginMutation();
   const [error, setError] = useState('');
-  const inputClass =
-    'mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3.5 text-sm text-slate-900 outline-none transition focus:border-school-blue focus:bg-white focus:ring-4 focus:ring-blue-100';
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError(
-      'Sign-in is not available yet. Please contact the school office for assistance.',
-    );
+    setError('');
+    const values = new FormData(event.currentTarget);
+    try {
+      const result = await login({
+        userId: String(values.get('userId')).trim(),
+        password: String(values.get('password')),
+      }).unwrap();
+      dispatch(baseApi.util.resetApiState());
+      dispatch(setUser(result.data));
+      router.replace('/dashboard');
+    } catch (error) {
+      setError(authError(error));
+    }
   }
 
   return (
     <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-      <div>
-        <label htmlFor="email" className="text-sm font-semibold text-slate-700">
-          Email address
-        </label>
-        <input
-          id="email"
-          name="email"
-          type="email"
-          autoComplete="username"
-          placeholder="Enter your email address"
-          required
-          className={inputClass}
-          onChange={() => setError('')}
-        />
-      </div>
-      <div>
-        <label
-          htmlFor="password"
-          className="text-sm font-semibold text-slate-700"
-        >
-          Password
-        </label>
-        <div className="relative">
-          <input
-            id="password"
-            name="password"
-            type={showPassword ? 'text' : 'password'}
-            autoComplete="current-password"
-            placeholder="Enter your password"
-            required
-            className={`${inputClass} pr-20`}
-            onChange={() => setError('')}
-          />
-          <button
-            type="button"
-            onClick={() => setShowPassword(!showPassword)}
-            aria-label={showPassword ? 'Hide password' : 'Show password'}
-            aria-pressed={showPassword}
-            className="absolute inset-y-0 right-2 mt-2 rounded-lg px-3 text-xs font-bold text-school-blue hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-school-blue"
-          >
-            {showPassword ? 'Hide' : 'Show'}
-          </button>
-        </div>
-      </div>
+      <AuthField
+        label="School ID"
+        name="userId"
+        inputMode="numeric"
+        autoComplete="username"
+        placeholder="Enter your 8-digit ID"
+        pattern="[0-9]{8}"
+        minLength={8}
+        maxLength={8}
+        required
+        onChange={() => setError('')}
+      />
+      <AuthField
+        label="Password"
+        name="password"
+        type="password"
+        autoComplete="current-password"
+        placeholder="Enter your password"
+        maxLength={72}
+        required
+        onChange={() => setError('')}
+      />
       {error && (
         <p
           role="alert"
@@ -71,9 +65,11 @@ export default function LoginForm() {
       )}
       <button
         type="submit"
+        disabled={isLoading}
         className="flex w-full items-center justify-center gap-3 rounded-xl bg-school-blue px-5 py-4 text-sm font-bold text-white shadow-lg shadow-blue-900/15 transition hover:bg-blue-950 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-school-blue"
       >
-        Sign in <span aria-hidden="true">→</span>
+        {isLoading ? 'Signing in…' : 'Sign in'}{' '}
+        <span aria-hidden="true">→</span>
       </button>
       <details className="group text-center">
         <summary className="cursor-pointer list-none rounded text-sm font-medium text-school-blue hover:underline focus-visible:outline-2 focus-visible:outline-school-blue [&::-webkit-details-marker]:hidden">

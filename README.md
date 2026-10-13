@@ -53,7 +53,7 @@ The parenthesized groups do not appear in URLs. Add public pages to `(mainLayout
 
 Redux Toolkit manages the store, with typed `useAppDispatch` and `useAppSelector` hooks. Only auth state is persisted to localStorage under `persist:gscamcb-auth`; RTK Query cache is not persisted. A fresh store is created per provider instance so server requests do not share session state. Persistence starts after browser mount and `PersistGate` waits for rehydration. Storage access tolerates SSR and disabled browser storage.
 
-The auth slice exposes `setUser`, `logout`, and `selectCurrentUser`. `baseApi` includes credentials and attaches a Bearer token when available. The final authorization-header format must match the backend when authentication is implemented. Clearing auth does not clear RTK Query cache automatically; an eventual sign-out flow should also dispatch `baseApi.util.resetApiState()`.
+The auth slice exposes `setUser`, `logout`, and `selectCurrentUser`. `baseApi` includes credentials and attaches a Bearer token when available. Login uses the backend ID/password endpoint and stores the returned user/accessToken in Redux. Login and sign-out clear the RTK Query cache so data is not carried between accounts. Dashboard access verifies the session through `/users/me`; invalid sessions return to login. Initial passwords must be changed before dashboard access. Email is contact data, not a login identifier.
 
 `healthApi` calls the existing `/api/v1/health` endpoint. Authentication, refresh-token requests, private routes, and school feature APIs are intentionally pending their backend implementations. The dashboard is currently public; persisted state does not enforce access permissions. No reference branding assets, Firebase configuration, or credentials are copied.
 
@@ -72,3 +72,5 @@ npm run build -- --webpack
 Prettier uses the same formatting options as the backend, with VS Code format on save configured. Install the recommended Prettier extension. After adding or moving routes, run `npx next typegen` before standalone type checking to update generated route types.
 
 The online dependency audit during setup reported five high-severity advisories in the existing Next.js ESLint development-tool chain (`eslint-config-next`, `@next/eslint-plugin-next`, `fast-glob`, `micromatch`, `braces`). The proposed automatic fix downgrades the lint configuration to Next.js 14; it was not applied to this Next.js 16 project.
+
+Sign in with your eight-digit School ID and password. Configure NEXT_PUBLIC_BACKEND_URL to point to the backend running the ID-only auth API. New demo accounts use the backend DEFAULT_PASSWORD and are prompted to change it after signing in.
