@@ -49,7 +49,6 @@ export default function CreateUserForm({
 
   // Form Fields
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [firstName, setFirstName] = useState('');
   const [middleName, setMiddleName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -110,11 +109,6 @@ export default function CreateUserForm({
       return;
     }
 
-    if (!isStudent && !email.trim()) {
-      toast.error('Email is required for staff and administrative accounts');
-      return;
-    }
-
     if (!isStudent && !designation.trim()) {
       toast.error('Designation is required for employee accounts');
       return;
@@ -123,7 +117,6 @@ export default function CreateUserForm({
     const payload: TCreateUserPayload = {
       role,
       email: email.trim() || undefined,
-      password: password.trim() || undefined,
       profile: {
         shift,
         name: {
@@ -202,7 +195,6 @@ export default function CreateUserForm({
   function handleReset() {
     setCreatedUser(null);
     setEmail('');
-    setPassword('');
     setFirstName('');
     setMiddleName('');
     setLastName('');
@@ -272,10 +264,16 @@ export default function CreateUserForm({
               {createdUser.role}
             </span>
           </div>
-          <div className="flex justify-between">
+          <div className="flex justify-between border-b border-slate-200 pb-2">
             <span className="text-sm font-medium text-slate-500">Email</span>
             <span className="text-sm text-slate-800">
-              {createdUser.email || 'N/A (Default School Password applies)'}
+              {createdUser.email || 'N/A'}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-sm font-medium text-slate-500">Password</span>
+            <span className="text-sm font-medium text-emerald-700">
+              Default system password applied
             </span>
           </div>
         </div>
@@ -315,7 +313,7 @@ export default function CreateUserForm({
           <h2 className="text-base font-bold text-slate-800">
             1. Account Configuration
           </h2>
-          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
                 User Role *
@@ -349,34 +347,21 @@ export default function CreateUserForm({
 
             <div>
               <label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-                Email Address {!isStudent && '*'}
+                Email Address (Optional)
               </label>
               <input
                 type="email"
                 value={email}
-                required={!isStudent}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder={
-                  isStudent ? 'Optional for students' : 'Required for staff'
-                }
-                className="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-school-blue focus:bg-white"
-              />
-            </div>
-
-            <div>
-              <label className="text-xs font-semibold uppercase tracking-wider text-slate-600">
-                Initial Password (Optional)
-              </label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Leave blank for default password"
-                minLength={8}
+                placeholder="Optional (e.g. user@example.com)"
                 className="mt-1.5 w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-school-blue focus:bg-white"
               />
             </div>
           </div>
+          <p className="mt-2 text-xs text-slate-500">
+            The account will be initialized with the system default password
+            configured in your environment.
+          </p>
         </section>
 
         {/* English & Bengali Names */}
