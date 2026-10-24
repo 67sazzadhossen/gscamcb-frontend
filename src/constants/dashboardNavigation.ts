@@ -80,11 +80,17 @@ const groups: NavigationGroup[] = [
   ...roleGroups.map(({ label, singular, path, roles, recyclable }) => ({
     label,
     items: [
-      { label: `Add ${singular}`, href: `/dashboard/${path}/create`, roles },
+      {
+        label: `Add ${singular}`,
+        href: `/dashboard/${path}/create`,
+        roles,
+        available: true,
+      },
       {
         label: `All ${label.toLowerCase()}`,
         href: `/dashboard/${path}`,
         roles,
+        available: true,
       },
       ...(recyclable
         ? [
@@ -92,6 +98,7 @@ const groups: NavigationGroup[] = [
               label: 'Recycle bin',
               href: `/dashboard/${path}/recycle-bin`,
               roles,
+              available: true,
             },
           ]
         : []),
@@ -104,16 +111,19 @@ const groups: NavigationGroup[] = [
         label: 'Recycle bin',
         href: '/dashboard/students/recycle-bin',
         roles: administrators,
+        available: true,
       },
       {
         label: 'Add student',
         href: '/dashboard/students/create',
         roles: [...administrators, 'TEACHER'],
+        available: true,
       },
       {
         label: 'All students',
         href: '/dashboard/students',
         roles: administrators,
+        available: true,
       },
       {
         label: 'Collected students',

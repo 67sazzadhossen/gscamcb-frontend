@@ -1,5 +1,10 @@
 import { baseApi } from '@/redux/api/baseApi';
-import type { TCreateUserPayload, TResponse, TUser } from '@/types/index.type';
+import type {
+  TCreateUserPayload,
+  TResponse,
+  TUser,
+  TUserListResponse,
+} from '@/types/index.type';
 
 export const userApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -12,7 +17,7 @@ export const userApi = baseApi.injectEndpoints({
       invalidatesTags: ['User'],
     }),
     getUsers: builder.query<
-      TResponse<TUser[]>,
+      TResponse<TUserListResponse>,
       { role?: string; shift?: string; page?: number; limit?: number } | void
     >({
       query: (params) => ({
@@ -22,9 +27,34 @@ export const userApi = baseApi.injectEndpoints({
       }),
       providesTags: ['User'],
     }),
+    getRecycleBinUsers: builder.query<
+      TResponse<TUserListResponse>,
+      { role?: string; shift?: string; page?: number; limit?: number } | void
+    >({
+      query: (params) => ({
+        url: '/users/recycle-bin',
+        method: 'GET',
+        params: params || {},
+      }),
+      providesTags: ['User'],
+    }),
     getUser: builder.query<TResponse<TUser>, string>({
       query: (userId) => `/users/${userId}`,
       providesTags: ['User'],
+    }),
+    updateUser: builder.mutation<
+      TResponse<TUser>,
+      {
+        userId: string;
+        body: { email?: string; status?: 'ACTIVE' | 'BLOCKED' };
+      }
+    >({
+      query: ({ userId, body }) => ({
+        url: `/users/${userId}`,
+        method: 'PATCH',
+        body,
+      }),
+      invalidatesTags: ['User'],
     }),
     recycleUser: builder.mutation<TResponse<TUser>, string>({
       query: (userId) => ({
@@ -53,7 +83,9 @@ export const userApi = baseApi.injectEndpoints({
 export const {
   useCreateUserMutation,
   useGetUsersQuery,
+  useGetRecycleBinUsersQuery,
   useGetUserQuery,
+  useUpdateUserMutation,
   useRecycleUserMutation,
   useRestoreUserMutation,
   usePermanentlyDeleteUserMutation,

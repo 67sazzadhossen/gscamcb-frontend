@@ -88,5 +88,15 @@ export type TCreateUserPayload = {
   };
 };
 
+export type TUserListResponse = {
+  data: TUser[];
+  meta: {
+    page: number;
+    limit: number;
+    total: number;
+    totalPages: number;
+  };
+};
+
 export type TResponse<T> = { success: boolean; message: string; data: T };
 export type THealth = { status: 'ok'; service: string; uptime: number };
