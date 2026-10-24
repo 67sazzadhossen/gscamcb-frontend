@@ -50,7 +50,7 @@ const roleGroups: {
     label: 'Admins',
     singular: 'admin',
     path: 'administrators',
-    roles: administrators,
+    roles: ['SUPER_ADMIN'],
     recyclable: true,
   },
   {
@@ -157,7 +157,7 @@ const groups: NavigationGroup[] = [
       {
         label: 'Admin attendance',
         href: '/dashboard/attendance/admins',
-        roles: administrators,
+        roles: ['SUPER_ADMIN'],
       },
       {
         label: 'Super admin attendance',
